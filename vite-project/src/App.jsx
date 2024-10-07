@@ -13,6 +13,12 @@ function App() {
     }
   };
 
+  const handleDelete = (index) => {
+    const newTasks = [...tasks];
+    newTasks.splice(index, 1);
+    setTasks(newTasks);
+  };
+
   return (
     <div className="App">
       <h1>Lista de Tareas</h1>
@@ -27,7 +33,10 @@ function App() {
       </form>
       <ul>
         {tasks.map((t, index) => (
-          <li key={index}>{t}</li>
+          <li key={index}>
+            {t} 
+            <button onClick={() => handleDelete(index)}>Borrar</button>
+          </li>
         ))}
       </ul>
     </div>
