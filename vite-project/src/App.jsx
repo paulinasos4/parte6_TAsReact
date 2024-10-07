@@ -2,21 +2,36 @@ import React, { useState } from 'react';
 import './App.css';
 
 function App() {
-  const [task, setTask] = useState("");
   const [tasks, setTasks] = useState([]);
+  const [newTask, setNewTask] = useState("");
+  const [editingTaskIndex, setEditingTaskIndex] = useState(null);
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (task.trim() !== "") {
-      setTasks([...tasks, task]);
-      setTask("");
+    if (newTask.trim() !== "") {
+      if (editingTaskIndex !== null) {
+        // Editando una tarea existente
+        const updatedTasks = [...tasks];
+        updatedTasks[editingTaskIndex] = newTask;
+        setTasks(updatedTasks);
+        setEditingTaskIndex(null);
+      } else {
+        // Agregando una nueva tarea
+        setTasks([...tasks, newTask]);
+      }
+      setNewTask("");
     }
   };
 
   const handleDelete = (index) => {
-    const newTasks = [...tasks];
-    newTasks.splice(index, 1);
-    setTasks(newTasks);
+    const updatedTasks = [...tasks];
+    updatedTasks.splice(index, 1);
+    setTasks(updatedTasks);
+  };
+
+  const handleEdit = (index) => {
+    setNewTask(tasks[index]);
+    setEditingTaskIndex(index);
   };
 
   return (
@@ -25,16 +40,17 @@ function App() {
       <form onSubmit={handleSubmit}>
         <input
           type="text"
-          value={task}
-          onChange={(event) => setTask(event.target.value)}
+          value={newTask}
+          onChange={(event) => setNewTask(event.target.value)}
           placeholder="Agregar tarea"
         />
-        <button type="submit">Agregar</button>
+        <button type="submit">{editingTaskIndex !== null ? "Guardar" : "Agregar"}</button>
       </form>
       <ul>
-        {tasks.map((t, index) => (
+        {tasks.map((task, index) => (
           <li key={index}>
-            {t} 
+            {task}
+            <button onClick={() => handleEdit(index)}>Editar</button>
             <button onClick={() => handleDelete(index)}>Borrar</button>
           </li>
         ))}
